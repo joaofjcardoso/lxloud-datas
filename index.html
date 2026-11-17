@@ -80,7 +80,15 @@ body { margin: 0; background: var(--bg); color: var(--fg); font-family: var(--sa
 .pick button:disabled { opacity: .5; cursor: progress; }
 
 /* calendar overview */
-.cal { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 14px; padding-block: 8px 6px; }
+.cal { max-width: 420px; padding-block: 8px 6px; touch-action: pan-y; user-select: none; }
+.calnav { display: grid; grid-template-columns: 40px 1fr 40px; align-items: center; gap: 8px; margin-bottom: 8px; }
+.calnav h3 { margin: 0; justify-content: center; gap: 10px; }
+.calbtn { font: inherit; font-size: 22px; line-height: 1; height: 40px; border: 1px solid var(--hair); border-radius: 4px; background: transparent; color: var(--fg); cursor: pointer; }
+.calbtn:disabled { opacity: .25; cursor: default; }
+.calbtn:focus-visible, .caldots button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.caldots { display: flex; justify-content: center; gap: 6px; padding-top: 10px; }
+.caldots button { width: 8px; height: 8px; padding: 0; border: 0; border-radius: 50%; background: var(--hair); cursor: pointer; }
+.caldots button.on { background: var(--accent); width: 20px; border-radius: 4px; }
 .month { background: var(--card); border: 1px solid var(--hair); border-radius: 6px; padding: 12px 12px 10px; }
 .month h3 { margin: 0 0 8px; font-family: var(--mono); font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; display: flex; justify-content: space-between; }
 .month h3 span { color: var(--accent); }
@@ -153,7 +161,7 @@ details.past .card { opacity: .7; }
   <footer class="contact" id="contact"></footer>
 </main>
 
-<script id="dados" type="application/json">{"artista": "Kiko is Hot", "form": {"action": "https://docs.google.com/forms/d/e/1FAIpQLSfXUH9fktio8Czjj24COxhIbb63212ycx9yS8KX4DgGjs3XxQ/formResponse", "entry_data": "entry.1814552314", "entry_pessoa": "entry.526868616", "entry_estado": "entry.329479184", "respostas_csv": "https://docs.google.com/spreadsheets/d/e/2PACX-1vRlbxHYrf6KQ5XZXn-JDt_bA_U3hftHC-RQ_45zKfCe7z0YD97lBH4vp93HFRg-gWq7lFklPzQp6WhA/pub?output=csv"}, "whatsapp": "351922002925", "contacto": {"nome": "João Cardoso", "telefone": "+351 922 002 925", "email": "joao.cardoso@lxloud.com"}, "equipa": [{"id": "pimenta", "nome": "Pimenta", "funcao": "Dançarina"}, {"id": "jessica", "nome": "Jessica", "funcao": "Dançarina"}, {"id": "solange", "nome": "Solange", "funcao": "MC"}], "datas": [{"id": "2026-12-04-porto", "data": "2026-12-04", "cidade": "Porto"}, {"id": "2026-12-12-lisboa", "data": "2026-12-12", "cidade": "Lisboa"}, {"id": "2026-12-31-coimbra", "data": "2026-12-31", "cidade": "Coimbra"}, {"id": "2027-04-24-almada", "data": "2027-04-24", "cidade": "Almada"}, {"id": "2027-04-30-punta-umbria", "data": "2027-04-30", "cidade": "Punta Umbría"}, {"id": "2027-07-24-vila-nova-de-paiva", "data": "2027-07-24", "cidade": "Vila Nova de Paiva"}, {"id": "2027-08-14-sol-da-caparica", "data": "2027-08-14", "cidade": "Sol da Caparica"}], "respostas": {}, "versao": "dc926f4811"}</script>
+<script id="dados" type="application/json">{"artista": "Kiko is Hot", "form": {"action": "https://docs.google.com/forms/d/e/1FAIpQLSfXUH9fktio8Czjj24COxhIbb63212ycx9yS8KX4DgGjs3XxQ/formResponse", "entry_data": "entry.1814552314", "entry_pessoa": "entry.526868616", "entry_estado": "entry.329479184", "respostas_csv": "https://docs.google.com/spreadsheets/d/e/2PACX-1vRlbxHYrf6KQ5XZXn-JDt_bA_U3hftHC-RQ_45zKfCe7z0YD97lBH4vp93HFRg-gWq7lFklPzQp6WhA/pub?output=csv"}, "whatsapp": "351922002925", "contacto": {"nome": "João Cardoso", "telefone": "+351 922 002 925", "email": "joao.cardoso@lxloud.com"}, "equipa": [{"id": "pimenta", "nome": "Pimenta", "funcao": "Dançarina"}, {"id": "jessica", "nome": "Jessica", "funcao": "Dançarina"}, {"id": "solange", "nome": "Solange", "funcao": "MC"}], "datas": [{"id": "2026-12-04-porto", "data": "2026-12-04", "cidade": "Porto"}, {"id": "2026-12-12-lisboa", "data": "2026-12-12", "cidade": "Lisboa"}, {"id": "2026-12-31-coimbra", "data": "2026-12-31", "cidade": "Coimbra"}, {"id": "2027-04-24-almada", "data": "2027-04-24", "cidade": "Almada"}, {"id": "2027-04-30-punta-umbria", "data": "2027-04-30", "cidade": "Punta Umbría"}, {"id": "2027-07-24-vila-nova-de-paiva", "data": "2027-07-24", "cidade": "Vila Nova de Paiva"}, {"id": "2027-08-14-sol-da-caparica", "data": "2027-08-14", "cidade": "Sol da Caparica"}], "respostas": {}, "versao": "1b53280bcd"}</script>
 <script>
 (() => {
   const D = JSON.parse(document.getElementById("dados").textContent);
@@ -194,13 +202,20 @@ details.past .card { opacity: .7; }
     const byDay = {};
     upcoming.forEach(d => (byDay[d.data] ||= []).push(d));
     const t = todayISO();
-    const [fy, fm] = upcoming[0].data.split("-").map(Number);
-    const [ly, lm] = upcoming[upcoming.length - 1].data.split("-").map(Number);
-    for (let y = fy, m = fm; y < ly || (y === ly && m <= lm); m === 12 ? (y++, m = 1) : m++) {
-      const n = Object.keys(byDay).filter(k => k.startsWith(y + "-" + String(m).padStart(2, "0"))).length;
-      if (!n) continue;  // months with no dates would only push the rest down
+    // one month on screen at a time, only months that have dates; arrows or a swipe move between them
+    const months = [...new Set(upcoming.map(d => d.data.slice(0, 7)))];
+    calIdx = Math.max(0, Math.min(calIdx, months.length - 1));
+    {
+      const [y, m] = months[calIdx].split("-").map(Number);
+      const n = Object.keys(byDay).filter(k => k.startsWith(months[calIdx])).length;
       const box = el("div", "month");
-      const h = el("h3"); h.append(MON[m-1] + " " + y); if (n) h.append(el("span", null, n + (n > 1 ? " datas" : " data")));
+      const nav = el("div", "calnav");
+      const prev = el("button", "calbtn", "‹"); prev.type = "button"; prev.id = "cal-prev"; prev.setAttribute("aria-label", "Mês anterior"); prev.disabled = calIdx === 0;
+      const next = el("button", "calbtn", "›"); next.type = "button"; next.id = "cal-next"; next.setAttribute("aria-label", "Mês seguinte"); next.disabled = calIdx === months.length - 1;
+      prev.addEventListener("click", () => moveCal(-1));
+      next.addEventListener("click", () => moveCal(1));
+      const h = el("h3"); h.append(MON[m-1] + " " + y, el("span", null, n + (n > 1 ? " datas" : " data")));
+      nav.append(prev, h, next);
       const g = el("div", "grid7");
       ["S","T","Q","Q","S","S","D"].forEach(w => g.append(el("span", "wd", w)));
       const first = (new Date(y, m-1, 1).getDay() + 6) % 7;
@@ -230,10 +245,29 @@ details.past .card { opacity: .7; }
         if (iso === t) cell.classList.add("today");
         g.append(cell);
       }
-      box.append(h, g);
+      const dots = el("div", "caldots");
+      months.forEach((_, i) => { const b = el("button", i === calIdx ? "on" : ""); b.type = "button"; b.setAttribute("aria-label", "Ir para " + MON[+months[i].slice(5)-1] + " " + months[i].slice(0,4)); b.addEventListener("click", () => { calIdx = i; render(); }); dots.append(b); });
+      box.append(nav, g, dots);
       cal.append(box);
     }
   }
+  let calIdx = 0;
+  function moveCal(step) { calIdx += step; render(); }
+  // swipe left/right on the calendar
+  (() => {
+    let x0 = null, y0 = null;
+    const c = document.getElementById("cal");
+    c.addEventListener("touchstart", e => { x0 = e.touches[0].clientX; y0 = e.touches[0].clientY; }, { passive: true });
+    c.addEventListener("touchend", e => {
+      if (x0 == null) return;
+      const dx = e.changedTouches[0].clientX - x0, dy = e.changedTouches[0].clientY - y0;
+      x0 = null;
+      if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy) * 1.5) {
+        const btn = document.getElementById(dx < 0 ? "cal-next" : "cal-prev");
+        if (btn && !btn.disabled) moveCal(dx < 0 ? 1 : -1);
+      }
+    }, { passive: true });
+  })();
 
   function card(d) {
     const c = el("article", "card");
