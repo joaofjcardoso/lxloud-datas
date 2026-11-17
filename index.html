@@ -155,13 +155,13 @@ details.past .card { opacity: .7; }
     <span><i style="background:var(--maybe-bg)"></i>Há talvez</span>
     <span><i style="background:var(--no-bg)"></i>Alguém indisponível</span>
   </div>
-  <h2 class="sectitle">Próximas datas</h2>
+  <h2 class="sectitle" id="listTitle">Próximas datas</h2>
   <section class="list" id="list" aria-live="polite"></section>
   <section id="pastWrap"></section>
   <footer class="contact" id="contact"></footer>
 </main>
 
-<script id="dados" type="application/json">{"artista": "Kiko is Hot", "form": {"action": "https://docs.google.com/forms/d/e/1FAIpQLSfXUH9fktio8Czjj24COxhIbb63212ycx9yS8KX4DgGjs3XxQ/formResponse", "entry_data": "entry.1814552314", "entry_pessoa": "entry.526868616", "entry_estado": "entry.329479184", "respostas_csv": "https://docs.google.com/spreadsheets/d/e/2PACX-1vRlbxHYrf6KQ5XZXn-JDt_bA_U3hftHC-RQ_45zKfCe7z0YD97lBH4vp93HFRg-gWq7lFklPzQp6WhA/pub?output=csv"}, "whatsapp": "351922002925", "contacto": {"nome": "João Cardoso", "telefone": "+351 922 002 925", "email": "joao.cardoso@lxloud.com"}, "equipa": [{"id": "pimenta", "nome": "Pimenta", "funcao": "Dançarina"}, {"id": "jessica", "nome": "Jessica", "funcao": "Dançarina"}, {"id": "solange", "nome": "Solange", "funcao": "MC"}], "datas": [{"id": "2026-12-04-porto", "data": "2026-12-04", "cidade": "Porto"}, {"id": "2026-12-12-lisboa", "data": "2026-12-12", "cidade": "Lisboa"}, {"id": "2026-12-31-coimbra", "data": "2026-12-31", "cidade": "Coimbra"}, {"id": "2027-04-24-almada", "data": "2027-04-24", "cidade": "Almada"}, {"id": "2027-04-30-punta-umbria", "data": "2027-04-30", "cidade": "Punta Umbría"}, {"id": "2027-07-24-vila-nova-de-paiva", "data": "2027-07-24", "cidade": "Vila Nova de Paiva"}, {"id": "2027-08-14-sol-da-caparica", "data": "2027-08-14", "cidade": "Sol da Caparica"}], "respostas": {}, "versao": "1b53280bcd"}</script>
+<script id="dados" type="application/json">{"artista": "Kiko is Hot", "form": {"action": "https://docs.google.com/forms/d/e/1FAIpQLSfXUH9fktio8Czjj24COxhIbb63212ycx9yS8KX4DgGjs3XxQ/formResponse", "entry_data": "entry.1814552314", "entry_pessoa": "entry.526868616", "entry_estado": "entry.329479184", "respostas_csv": "https://docs.google.com/spreadsheets/d/e/2PACX-1vRlbxHYrf6KQ5XZXn-JDt_bA_U3hftHC-RQ_45zKfCe7z0YD97lBH4vp93HFRg-gWq7lFklPzQp6WhA/pub?output=csv"}, "whatsapp": "351922002925", "contacto": {"nome": "João Cardoso", "telefone": "+351 922 002 925", "email": "joao.cardoso@lxloud.com"}, "equipa": [{"id": "pimenta", "nome": "Pimenta", "funcao": "Dançarina"}, {"id": "jessica", "nome": "Jessica", "funcao": "Dançarina"}, {"id": "solange", "nome": "Solange", "funcao": "MC"}], "datas": [{"id": "2026-12-04-porto", "data": "2026-12-04", "cidade": "Porto"}, {"id": "2026-12-12-lisboa", "data": "2026-12-12", "cidade": "Lisboa"}, {"id": "2026-12-31-coimbra", "data": "2026-12-31", "cidade": "Coimbra"}, {"id": "2027-04-24-almada", "data": "2027-04-24", "cidade": "Almada"}, {"id": "2027-04-30-punta-umbria", "data": "2027-04-30", "cidade": "Punta Umbría"}, {"id": "2027-07-24-vila-nova-de-paiva", "data": "2027-07-24", "cidade": "Vila Nova de Paiva"}, {"id": "2027-08-14-sol-da-caparica", "data": "2027-08-14", "cidade": "Sol da Caparica"}], "respostas": {}, "versao": "3fa1d3fa7f"}</script>
 <script>
 (() => {
   const D = JSON.parse(document.getElementById("dados").textContent);
@@ -250,7 +250,9 @@ details.past .card { opacity: .7; }
       box.append(nav, g, dots);
       cal.append(box);
     }
+    return months[calIdx];
   }
+  const MESES = ["janeiro","fevereiro","março","abril","maio","junho","julho","agosto","setembro","outubro","novembro","dezembro"];
   let calIdx = 0;
   function moveCal(step) { calIdx += step; render(); }
   // swipe left/right on the calendar
@@ -370,9 +372,11 @@ details.past .card { opacity: .7; }
     const t = todayISO();
     const ds = [...D.datas].sort((a, b) => a.data.localeCompare(b.data));
     const next = ds.filter(d => d.data >= t), past = ds.filter(d => d.data < t).reverse();
-    calendar(next);
+    const mes = calendar(next);
+    const doMes = mes ? next.filter(d => d.data.startsWith(mes)) : [];
+    $("#listTitle").textContent = mes ? "Datas de " + MESES[+mes.slice(5) - 1] + " " + mes.slice(0, 4) : "Próximas datas";
     const list = $("#list");
-    if (next.length) list.replaceChildren(...next.map(card));
+    if (doMes.length) list.replaceChildren(...doMes.map(card));
     else { const e = el("div", "empty"); e.append(el("h2", null, "Ainda não há datas confirmadas."), el("p", null, "Quando uma data fica fechada, aparece aqui com a cidade e a equipa.")); list.replaceChildren(e); }
     const pw = $("#pastWrap"); pw.replaceChildren();
     if (past.length) {
