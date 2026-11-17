@@ -1,0 +1,268 @@
+<!doctype html>
+<html lang="pt">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>LXLOUD Disponibilidades</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#121212">
+<meta property="og:title" content="LXLOUD · Datas & disponibilidades">
+<meta property="og:description" content="Datas confirmadas e disponibilidade da equipa.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' fill='%23121212'/%3E%3Crect x='9' y='9' width='5' height='5' fill='%23b6ff3c'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&family=JetBrains+Mono:wght@400;700&display=swap">
+<style>
+/* Layout: ink masthead with the wordmark + mono ticker, then one column of date cards; each card lists the crew with a state chip. */
+:root {
+  --ink: #121212; --paper: #ffffff; --muted: #54534f; --accent: #4f7d00; --lime: #b6ff3c;
+  --hair: #e6e6e6; --ghost: #f4f5f1; --bg: #fafaf8; --fg: #121212; --card: #ffffff;
+  --yes-bg: #b6ff3c; --yes-fg: #121212;
+  --no-bg: #ffe1dc;  --no-fg: #8a1c0c;
+  --maybe-bg: #fff1c2; --maybe-fg: #6b4e00;
+  --none-bg: #efefef; --none-fg: #54534f;
+  --sans: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) { :root {
+  --bg: #0e0e0d; --fg: #f2f2ee; --card: #181817; --muted: #a3a29b; --accent: #b6ff3c;
+  --hair: #2a2a28; --ghost: #1f1f1d;
+  --no-bg: #3a1712; --no-fg: #ffb4a6; --maybe-bg: #33290c; --maybe-fg: #ffd970; --none-bg: #262624; --none-fg: #a3a29b;
+  color-scheme: dark } }
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--bg); color: var(--fg); font-family: var(--sans); font-size: 15px; line-height: 1.45; padding-bottom: env(safe-area-inset-bottom, 0px); }
+.wrap { max-width: 860px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+
+.mast { background: var(--ink); color: #fff; padding-top: env(safe-area-inset-top, 0px); }
+.mast .wrap { padding-block: 28px 22px; display: grid; gap: 18px; }
+.mast svg { height: 34px; width: auto; display: block; }
+.mast h1 { margin: 0; font-weight: 900; font-size: clamp(30px, 7vw, 52px); letter-spacing: -0.03em; line-height: 0.95; text-wrap: balance; }
+.mast h1 em { font-style: normal; background: var(--lime); color: var(--ink); padding: 0 .12em; }
+.mast p { margin: 0; color: #c9c9c3; max-width: 60ch; }
+.ticker { background: var(--lime); color: var(--ink); font-family: var(--mono); font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; overflow: hidden; white-space: nowrap; }
+.ticker .wrap { padding-block: 7px; }
+
+.bar { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; justify-content: space-between; padding-block: 18px 6px; }
+.legend { display: flex; flex-wrap: wrap; gap: 8px; }
+.note { font-family: var(--mono); font-size: 11px; color: var(--muted); letter-spacing: .04em; }
+
+.chip { display: inline-flex; align-items: center; gap: 6px; border-radius: 3px; padding: 3px 8px; font-family: var(--mono); font-size: 11px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; white-space: nowrap; }
+.s-sim { background: var(--yes-bg); color: var(--yes-fg); }
+.s-nao { background: var(--no-bg); color: var(--no-fg); }
+.s-talvez { background: var(--maybe-bg); color: var(--maybe-fg); }
+.s-none { background: var(--none-bg); color: var(--none-fg); }
+
+.list { display: grid; gap: 14px; padding-block: 10px 40px; }
+.card { background: var(--card); border: 1px solid var(--hair); border-radius: 6px; display: grid; grid-template-columns: 112px 1fr; overflow: hidden; }
+.when { background: var(--ghost); padding: 16px 12px; display: grid; align-content: start; gap: 2px; text-align: center; border-right: 1px solid var(--hair); }
+.when .dow { font-family: var(--mono); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.when .day { font-weight: 900; font-size: 40px; line-height: 1; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; }
+.when .mon { font-family: var(--mono); font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--accent); }
+.when .yr { font-family: var(--mono); font-size: 11px; color: var(--muted); }
+.body { padding: 16px 18px 18px; min-width: 0; display: grid; gap: 12px; }
+.head { display: grid; gap: 4px; }
+.eyebrow { font-family: var(--mono); font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--accent); }
+.head h2 { margin: 0; font-size: 22px; font-weight: 800; letter-spacing: -0.01em; text-wrap: balance; }
+.sum { display: flex; flex-wrap: wrap; gap: 6px; }
+.crew { display: grid; border-top: 1px solid var(--hair); }
+.row { display: grid; grid-template-columns: minmax(0,1fr) auto; gap: 6px 12px; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--hair); }
+.row:last-child { border-bottom: 0; }
+.who b { font-weight: 600; }
+.who span { display: block; font-family: var(--mono); font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; }
+.pick { display: grid; grid-template-columns: repeat(3, auto); gap: 4px; }
+.pick button { font: inherit; font-family: var(--mono); font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; border: 1px solid var(--hair); background: transparent; color: var(--fg); border-radius: 3px; padding: 7px 9px; cursor: pointer; }
+.pick button[aria-pressed="true"].b-sim { background: var(--yes-bg); color: var(--yes-fg); border-color: transparent; }
+.pick button[aria-pressed="true"].b-nao { background: var(--no-bg); color: var(--no-fg); border-color: transparent; }
+.pick button[aria-pressed="true"].b-talvez { background: var(--maybe-bg); color: var(--maybe-fg); border-color: transparent; }
+.pick button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.pick button:disabled { opacity: .5; cursor: progress; }
+
+.empty { border: 1px dashed var(--hair); border-radius: 6px; padding: 28px 20px; display: grid; gap: 8px; }
+.empty h2 { margin: 0; font-size: 18px; }
+.empty p { margin: 0; color: var(--muted); max-width: 60ch; }
+details.past { margin-bottom: 40px; }
+details.past summary { cursor: pointer; font-family: var(--mono); font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); padding-block: 8px; }
+details.past .card { opacity: .7; }
+.contact { font-family: var(--mono); font-size: 12px; color: var(--muted); padding-block: 16px 32px; border-top: 1px solid var(--hair); }
+.contact b { color: var(--fg); user-select: all; }
+
+@media (max-width: 560px) {
+  .card { grid-template-columns: 1fr; }
+  .when { grid-template-columns: auto auto auto auto; justify-content: start; align-items: baseline; gap: 8px; text-align: left; border-right: 0; border-bottom: 1px solid var(--hair); padding: 10px 16px; }
+  .when .day { font-size: 26px; }
+  .row { grid-template-columns: 1fr; }
+}
+@media (prefers-reduced-motion: no-preference) { .pick button { transition: background .12s; } }
+</style>
+</head>
+<body>
+<header class="mast">
+  <div class="wrap">
+    <svg viewBox="0 0 4641 1180" role="img" aria-label="LXLOUD"><g transform="translate(90.00,1090.00) scale(0.48828,-0.48828)" fill="#ffffff"><path d="M96 0V1490H500V326H1102V0Z"/><path d="M46 0 583 762 106 1490H575L694 1296Q734 1231 760.5 1171.5Q787 1112 810 1058Q833 1112 860.5 1171.5Q888 1231 928 1296L1049 1490H1506L1038 773L1564 0H1081L919 256Q872 331 849.0 378.0Q826 425 804 467Q782 425 759.0 377.5Q736 330 687 256L516 0Z" transform="translate(1158.0,0)"/><path d="M96 0V1490H500V326H1102V0Z" transform="translate(2768.0,0)"/><path d="M794 -20Q591 -20 426.5 68.0Q262 156 166.0 326.5Q70 497 70 744Q70 993 166.0 1164.0Q262 1335 426.5 1422.5Q591 1510 794 1510Q997 1510 1161.0 1422.5Q1325 1335 1421.5 1164.0Q1518 993 1518 744Q1518 496 1421.5 325.5Q1325 155 1161.0 67.5Q997 -20 794 -20ZM794 332Q945 332 1023.5 438.0Q1102 544 1102 744Q1102 945 1023.5 1051.5Q945 1158 794 1158Q644 1158 565.0 1051.5Q486 945 486 744Q486 544 565.0 438.0Q644 332 794 332Z" transform="translate(3926.0,0)"/><path d="M738 -18Q546 -18 401.5 49.5Q257 117 176.5 241.5Q96 366 96 536V1490H500V570Q500 466 567.5 399.0Q635 332 738 332Q843 332 910.5 399.0Q978 466 978 570V1490H1382V536Q1382 366 1301.0 241.5Q1220 117 1075.0 49.5Q930 -18 738 -18Z" transform="translate(5514.0,0)"/><path d="M670 0H96V1490H664Q894 1490 1061.0 1400.5Q1228 1311 1319.0 1144.0Q1410 977 1410 744Q1410 512 1319.5 345.0Q1229 178 1063.0 89.0Q897 0 670 0ZM500 344H654Q765 344 843.5 379.0Q922 414 963.0 501.5Q1004 589 1004 744Q1004 900 962.0 987.5Q920 1075 839.5 1110.5Q759 1146 642 1146H500Z" transform="translate(6992.0,0)"/></g><rect x="4329.9" y="868.8" width="221.2" height="221.2" fill="#b6ff3c"/></svg>
+    <h1>Datas &amp; <em>disponibilidades.</em></h1>
+    <p>Datas confirmadas e quem da equipa pode estar presente. Toca no teu nome para responder.</p>
+  </div>
+</header>
+<div class="ticker" aria-hidden="true"><div class="wrap">● LXLOUD ● DATAS ● DANÇARINAS × MC ● DISPONIBILIDADES</div></div>
+
+<main class="wrap">
+  <div class="bar">
+    <div class="legend">
+      <span class="chip s-sim">✓ Disponível</span>
+      <span class="chip s-talvez">? Talvez</span>
+      <span class="chip s-nao">✕ Indisponível</span>
+      <span class="chip s-none">— Sem resposta</span>
+    </div>
+    <span class="note" id="status"></span>
+  </div>
+  <section class="list" id="list" aria-live="polite"></section>
+  <section id="pastWrap"></section>
+  <footer class="contact" id="contact"></footer>
+</main>
+
+<script id="dados" type="application/json">{"artista": "Kiko is Hot", "form": {"action": "https://docs.google.com/forms/d/e/1FAIpQLSfXUH9fktio8Czjj24COxhIbb63212ycx9yS8KX4DgGjs3XxQ/formResponse", "entry_data": "entry.1814552314", "entry_pessoa": "entry.526868616", "entry_estado": "entry.329479184", "respostas_csv": "https://docs.google.com/spreadsheets/d/e/2PACX-1vRlbxHYrf6KQ5XZXn-JDt_bA_U3hftHC-RQ_45zKfCe7z0YD97lBH4vp93HFRg-gWq7lFklPzQp6WhA/pub?output=csv"}, "whatsapp": "351922002925", "contacto": {"nome": "João Cardoso", "telefone": "+351 922 002 925", "email": "joao.cardoso@lxloud.com"}, "equipa": [{"id": "pimenta", "nome": "Pimenta", "funcao": "Dançarina"}, {"id": "jessica", "nome": "Jessica", "funcao": "Dançarina"}, {"id": "solange", "nome": "Solange", "funcao": "MC"}], "datas": [{"id": "2026-12-04-porto", "data": "2026-12-04", "cidade": "Porto"}, {"id": "2026-12-12-lisboa", "data": "2026-12-12", "cidade": "Lisboa"}, {"id": "2026-12-31-coimbra", "data": "2026-12-31", "cidade": "Coimbra"}], "respostas": {}}</script>
+<script>
+(() => {
+  const D = JSON.parse(document.getElementById("dados").textContent);
+  const F = D.form || {};
+  const FORM_ON = !!(F.action && F.entry_data && F.entry_pessoa && F.entry_estado);
+  const ESTADOS = { sim: "✓ Disponível", talvez: "? Talvez", nao: "✕ Indisponível" };
+  const DOW = ["Domingo","Segunda","Terça","Quarta","Quinta","Sexta","Sábado"];
+  const MON = ["Jan","Fev","Mar","Abr","Mai","Jun","Jul","Ago","Set","Out","Nov","Dez"];
+  const $ = (s) => document.querySelector(s);
+  const el = (tag, cls, txt) => { const n = document.createElement(tag); if (cls) n.className = cls; if (txt != null) n.textContent = txt; return n; };
+  const key = (d, p) => d + "__" + p;
+  const todayISO = () => { const d = new Date(); return d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2,"0") + "-" + String(d.getDate()).padStart(2,"0"); };
+
+  // respostas: base from the YAML, then the Form sheet, then this phone's own just-sent taps
+  const base = {};
+  for (const [dId, m] of Object.entries(D.respostas || {})) for (const [pId, e] of Object.entries(m || {})) base[key(dId, pId)] = e;
+  let sheet = {};
+  const local = {};
+  try { Object.assign(local, JSON.parse(localStorage.getItem("lx-local") || "{}")); } catch {}
+  const estado = (k) => local[k]?.e ?? sheet[k] ?? base[k] ?? null;
+
+  const dateLabel = (d) => { const [y,m,dd] = d.data.split("-").map(Number); return dd + " " + MON[m-1].toLowerCase() + " " + d.cidade; };
+
+  function card(d) {
+    const c = el("article", "card");
+    const [y, m, dd] = d.data.split("-").map(Number);
+    const dt = new Date(y, m-1, dd);
+    const w = el("div", "when");
+    w.append(el("span","dow", DOW[dt.getDay()]), el("span","day", String(dd)), el("span","mon", MON[m-1]), el("span","yr", String(y)));
+    const b = el("div", "body");
+    const h = el("div", "head");
+    h.append(el("span", "eyebrow", d.artista || D.artista || ""), el("h2", null, d.cidade));
+    b.append(h);
+    const crew = D.equipa.filter(p => !d.equipa || d.equipa.includes(p.id));
+    const n = { sim: 0, talvez: 0, nao: 0, none: 0 };
+    crew.forEach(p => n[estado(key(d.id, p.id)) || "none"]++);
+    const sum = el("div", "sum");
+    if (n.sim) sum.append(el("span", "chip s-sim", n.sim + (n.sim > 1 ? " disponíveis" : " disponível")));
+    if (n.talvez) sum.append(el("span", "chip s-talvez", n.talvez + " talvez"));
+    if (n.nao) sum.append(el("span", "chip s-nao", n.nao + (n.nao > 1 ? " indisponíveis" : " indisponível")));
+    if (n.none) sum.append(el("span", "chip s-none", n.none + " sem resposta"));
+    b.append(sum);
+    const list = el("div", "crew");
+    crew.forEach(p => list.append(row(d, p)));
+    b.append(list);
+    c.append(w, b);
+    return c;
+  }
+
+  function row(d, p) {
+    const k = key(d.id, p.id), est = estado(k);
+    const r = el("div", "row");
+    const who = el("div", "who"); who.append(el("b", null, p.nome), el("span", null, p.funcao));
+    const pick = el("div", "pick"); pick.setAttribute("role", "group"); pick.setAttribute("aria-label", "Disponibilidade de " + p.nome + " a " + dateLabel(d));
+    for (const e of ["sim", "talvez", "nao"]) {
+      const bt = el("button", "b-" + e, { sim: "✓ Sim", talvez: "? Talvez", nao: "✕ Não" }[e]); bt.type = "button";
+      bt.setAttribute("aria-pressed", String(est === e));
+      bt.addEventListener("click", () => responder(d, p, e, pick));
+      pick.append(bt);
+    }
+    r.append(who, pick);
+    return r;
+  }
+
+  async function responder(d, p, e, pick) {
+    const k = key(d.id, p.id);
+    if (!FORM_ON) {
+      const txt = p.nome + " · " + dateLabel(d) + " · " + ESTADOS[e].replace(/^\S+\s/, "");
+      local[k] = { e, t: Date.now() }; persist(); render();
+      window.location.href = "https://wa.me/" + D.whatsapp + "?text=" + encodeURIComponent(txt);
+      return;
+    }
+    pick.querySelectorAll("button").forEach(b => b.disabled = true);
+    const body = new URLSearchParams({ [F.entry_data]: d.id, [F.entry_pessoa]: p.id, [F.entry_estado]: e });
+    try {
+      await fetch(F.action, { method: "POST", mode: "no-cors", body });
+      local[k] = { e, t: Date.now() }; persist();
+      status("Resposta guardada: " + p.nome + ", " + dateLabel(d) + ".");
+    } catch {
+      status("Sem rede. A resposta não foi enviada, tenta outra vez.");
+    }
+    render();
+  }
+
+  function persist() { try { localStorage.setItem("lx-local", JSON.stringify(local)); } catch {} }
+  function status(t) { $("#status").textContent = t; }
+
+  function parseCSV(text) {
+    const rows = []; let row = [], cur = "", q = false;
+    for (let i = 0; i < text.length; i++) {
+      const ch = text[i];
+      if (q) { if (ch === '"') { if (text[i+1] === '"') { cur += '"'; i++; } else q = false; } else cur += ch; }
+      else if (ch === '"') q = true;
+      else if (ch === ",") { row.push(cur); cur = ""; }
+      else if (ch === "\n" || ch === "\r") { if (ch === "\r" && text[i+1] === "\n") i++; row.push(cur); rows.push(row); row = []; cur = ""; }
+      else cur += ch;
+    }
+    if (cur || row.length) { row.push(cur); rows.push(row); }
+    return rows;
+  }
+
+  async function lerFolha() {
+    if (!F.respostas_csv) return;
+    try {
+      const res = await fetch(F.respostas_csv + (F.respostas_csv.includes("?") ? "&" : "?") + "t=" + Date.now(), { cache: "no-store" });
+      if (!res.ok) throw 0;
+      const rows = parseCSV(await res.text()).slice(1);
+      const next = {};
+      // columns: timestamp, Data, Pessoa, Estado — rows arrive oldest first, so the last answer wins
+      for (const r of rows) { const [, dId, pId, e] = r.map(x => (x || "").trim()); if (dId && pId && ESTADOS[e]) next[key(dId, pId)] = e; }
+      sheet = next;
+      // a tap the sheet already shows no longer needs the local copy
+      for (const k of Object.keys(local)) if (sheet[k] === local[k].e || Date.now() - local[k].t > 864e5) delete local[k];
+      persist();
+      status("Atualizado às " + new Date().toLocaleTimeString("pt-PT", { hour: "2-digit", minute: "2-digit" }) + ".");
+      render();
+    } catch { status("Não foi possível ler as respostas agora."); }
+  }
+
+  function render() {
+    const t = todayISO();
+    const ds = [...D.datas].sort((a, b) => a.data.localeCompare(b.data));
+    const next = ds.filter(d => d.data >= t), past = ds.filter(d => d.data < t).reverse();
+    const list = $("#list");
+    if (next.length) list.replaceChildren(...next.map(card));
+    else { const e = el("div", "empty"); e.append(el("h2", null, "Ainda não há datas confirmadas."), el("p", null, "Quando uma data fica fechada, aparece aqui com a cidade e a equipa.")); list.replaceChildren(e); }
+    const pw = $("#pastWrap"); pw.replaceChildren();
+    if (past.length) {
+      const det = el("details", "past"); det.append(el("summary", null, "Datas passadas (" + past.length + ")"));
+      const inner = el("div", "list"); inner.append(...past.map(card)); det.append(inner); pw.append(det);
+    }
+  }
+
+  const c = D.contacto || {};
+  const ct = $("#contact"); ct.append("Dúvidas: " + (c.nome || "") + " · "); ct.append(el("b", null, c.telefone || "")); ct.append(" · "); ct.append(el("b", null, c.email || ""));
+  status(FORM_ON ? "A carregar respostas…" : "As respostas seguem por WhatsApp para o João.");
+  render();
+  lerFolha();
+  if (F.respostas_csv) { setInterval(lerFolha, 60000); document.addEventListener("visibilitychange", () => { if (!document.hidden) lerFolha(); }); }
+})();
+</script>
+</body>
+</html>
