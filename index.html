@@ -153,7 +153,7 @@ details.past .card { opacity: .7; }
   <footer class="contact" id="contact"></footer>
 </main>
 
-<script id="dados" type="application/json">{"artista": "Kiko is Hot", "form": {"action": "https://docs.google.com/forms/d/e/1FAIpQLSfXUH9fktio8Czjj24COxhIbb63212ycx9yS8KX4DgGjs3XxQ/formResponse", "entry_data": "entry.1814552314", "entry_pessoa": "entry.526868616", "entry_estado": "entry.329479184", "respostas_csv": "https://docs.google.com/spreadsheets/d/e/2PACX-1vRlbxHYrf6KQ5XZXn-JDt_bA_U3hftHC-RQ_45zKfCe7z0YD97lBH4vp93HFRg-gWq7lFklPzQp6WhA/pub?output=csv"}, "whatsapp": "351922002925", "contacto": {"nome": "João Cardoso", "telefone": "+351 922 002 925", "email": "joao.cardoso@lxloud.com"}, "equipa": [{"id": "pimenta", "nome": "Pimenta", "funcao": "Dançarina"}, {"id": "jessica", "nome": "Jessica", "funcao": "Dançarina"}, {"id": "solange", "nome": "Solange", "funcao": "MC"}], "datas": [{"id": "2026-12-04-porto", "data": "2026-12-04", "cidade": "Porto"}, {"id": "2026-12-12-lisboa", "data": "2026-12-12", "cidade": "Lisboa"}, {"id": "2026-12-31-coimbra", "data": "2026-12-31", "cidade": "Coimbra"}, {"id": "2027-04-30-punta-umbria", "data": "2027-04-30", "cidade": "Punta Umbría"}], "respostas": {}, "versao": "9d32549959"}</script>
+<script id="dados" type="application/json">{"artista": "Kiko is Hot", "form": {"action": "https://docs.google.com/forms/d/e/1FAIpQLSfXUH9fktio8Czjj24COxhIbb63212ycx9yS8KX4DgGjs3XxQ/formResponse", "entry_data": "entry.1814552314", "entry_pessoa": "entry.526868616", "entry_estado": "entry.329479184", "respostas_csv": "https://docs.google.com/spreadsheets/d/e/2PACX-1vRlbxHYrf6KQ5XZXn-JDt_bA_U3hftHC-RQ_45zKfCe7z0YD97lBH4vp93HFRg-gWq7lFklPzQp6WhA/pub?output=csv"}, "whatsapp": "351922002925", "contacto": {"nome": "João Cardoso", "telefone": "+351 922 002 925", "email": "joao.cardoso@lxloud.com"}, "equipa": [{"id": "pimenta", "nome": "Pimenta", "funcao": "Dançarina"}, {"id": "jessica", "nome": "Jessica", "funcao": "Dançarina"}, {"id": "solange", "nome": "Solange", "funcao": "MC"}], "datas": [{"id": "2026-12-04-porto", "data": "2026-12-04", "cidade": "Porto"}, {"id": "2026-12-12-lisboa", "data": "2026-12-12", "cidade": "Lisboa"}, {"id": "2026-12-31-coimbra", "data": "2026-12-31", "cidade": "Coimbra"}, {"id": "2027-04-30-punta-umbria", "data": "2027-04-30", "cidade": "Punta Umbría"}], "respostas": {}, "versao": "e704cfa4ab"}</script>
 <script>
 (() => {
   const D = JSON.parse(document.getElementById("dados").textContent);
@@ -197,8 +197,9 @@ details.past .card { opacity: .7; }
     const [fy, fm] = upcoming[0].data.split("-").map(Number);
     const [ly, lm] = upcoming[upcoming.length - 1].data.split("-").map(Number);
     for (let y = fy, m = fm; y < ly || (y === ly && m <= lm); m === 12 ? (y++, m = 1) : m++) {
-      const box = el("div", "month");
       const n = Object.keys(byDay).filter(k => k.startsWith(y + "-" + String(m).padStart(2, "0"))).length;
+      if (!n) continue;  // months with no dates would only push the rest down
+      const box = el("div", "month");
       const h = el("h3"); h.append(MON[m-1] + " " + y); if (n) h.append(el("span", null, n + (n > 1 ? " datas" : " data")));
       const g = el("div", "grid7");
       ["S","T","Q","Q","S","S","D"].forEach(w => g.append(el("span", "wd", w)));
