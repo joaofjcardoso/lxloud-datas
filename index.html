@@ -79,6 +79,28 @@ body { margin: 0; background: var(--bg); color: var(--fg); font-family: var(--sa
 .pick button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .pick button:disabled { opacity: .5; cursor: progress; }
 
+/* calendar overview */
+.cal { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 14px; padding-block: 8px 6px; }
+.month { background: var(--card); border: 1px solid var(--hair); border-radius: 6px; padding: 12px 12px 10px; }
+.month h3 { margin: 0 0 8px; font-family: var(--mono); font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; display: flex; justify-content: space-between; }
+.month h3 span { color: var(--accent); }
+.grid7 { display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; text-align: center; font-variant-numeric: tabular-nums; }
+.grid7 .wd { font-family: var(--mono); font-size: 10px; color: var(--muted); padding-bottom: 2px; }
+.grid7 .d { font-size: 13px; line-height: 30px; border-radius: 4px; color: var(--muted); }
+.grid7 .d.past { opacity: .35; }
+.grid7 a.d { color: var(--ink); font-weight: 800; text-decoration: none; cursor: pointer; }
+.grid7 a.d:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+.d.c-ok { background: var(--yes-bg); }
+.d.c-falta { background: transparent; box-shadow: inset 0 0 0 2px var(--lime); color: var(--fg) !important; }
+.d.c-nao { background: var(--no-bg); color: var(--no-fg) !important; }
+.d.c-talvez { background: var(--maybe-bg); color: var(--maybe-fg) !important; }
+.d.today { text-decoration: underline; text-underline-offset: 3px; }
+.callegend { display: flex; flex-wrap: wrap; gap: 6px 14px; font-family: var(--mono); font-size: 11px; color: var(--muted); padding-block: 4px 8px; }
+.callegend i { display: inline-block; width: 12px; height: 12px; border-radius: 3px; vertical-align: -2px; margin-right: 5px; }
+.card { scroll-margin-top: 16px; }
+.card.flash { outline: 2px solid var(--lime); outline-offset: 2px; }
+.sectitle { margin: 18px 0 0; font-family: var(--mono); font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+
 .empty { border: 1px dashed var(--hair); border-radius: 6px; padding: 28px 20px; display: grid; gap: 8px; }
 .empty h2 { margin: 0; font-size: 18px; }
 .empty p { margin: 0; color: var(--muted); max-width: 60ch; }
@@ -117,6 +139,15 @@ details.past .card { opacity: .7; }
     </div>
     <span class="note" id="status"></span>
   </div>
+  <h2 class="sectitle">Calendário</h2>
+  <section class="cal" id="cal" aria-label="Calendário de datas"></section>
+  <div class="callegend">
+    <span><i style="background:var(--yes-bg)"></i>Equipa completa</span>
+    <span><i style="box-shadow:inset 0 0 0 2px var(--lime)"></i>Faltam respostas</span>
+    <span><i style="background:var(--maybe-bg)"></i>Há talvez</span>
+    <span><i style="background:var(--no-bg)"></i>Alguém indisponível</span>
+  </div>
+  <h2 class="sectitle">Próximas datas</h2>
   <section class="list" id="list" aria-live="polite"></section>
   <section id="pastWrap"></section>
   <footer class="contact" id="contact"></footer>
@@ -146,8 +177,66 @@ details.past .card { opacity: .7; }
 
   const dateLabel = (d) => { const [y,m,dd] = d.data.split("-").map(Number); return dd + " " + MON[m-1].toLowerCase() + " " + d.cidade; };
 
+  function crewOf(d) { return D.equipa.filter(p => !d.equipa || d.equipa.includes(p.id)); }
+  function dayState(d) {
+    const st = crewOf(d).map(p => estado(key(d.id, p.id)));
+    if (st.includes("nao")) return "nao";
+    if (st.includes("talvez")) return "talvez";
+    if (st.includes(null)) return "falta";
+    return "ok";
+  }
+  const ESTADO_DIA = { ok: "equipa completa", falta: "faltam respostas", talvez: "há talvez", nao: "alguém indisponível" };
+
+  function calendar(upcoming) {
+    const cal = $("#cal"); cal.replaceChildren();
+    if (!upcoming.length) { cal.hidden = true; return; }
+    cal.hidden = false;
+    const byDay = {};
+    upcoming.forEach(d => (byDay[d.data] ||= []).push(d));
+    const t = todayISO();
+    const [fy, fm] = upcoming[0].data.split("-").map(Number);
+    const [ly, lm] = upcoming[upcoming.length - 1].data.split("-").map(Number);
+    for (let y = fy, m = fm; y < ly || (y === ly && m <= lm); m === 12 ? (y++, m = 1) : m++) {
+      const box = el("div", "month");
+      const n = Object.keys(byDay).filter(k => k.startsWith(y + "-" + String(m).padStart(2, "0"))).length;
+      const h = el("h3"); h.append(MON[m-1] + " " + y); if (n) h.append(el("span", null, n + (n > 1 ? " datas" : " data")));
+      const g = el("div", "grid7");
+      ["S","T","Q","Q","S","S","D"].forEach(w => g.append(el("span", "wd", w)));
+      const first = (new Date(y, m-1, 1).getDay() + 6) % 7;
+      for (let i = 0; i < first; i++) g.append(el("span"));
+      const days = new Date(y, m, 0).getDate();
+      for (let dd = 1; dd <= days; dd++) {
+        const iso = y + "-" + String(m).padStart(2,"0") + "-" + String(dd).padStart(2,"0");
+        const evs = byDay[iso];
+        let cell;
+        if (evs) {
+          const order = ["nao","talvez","falta","ok"];
+          const s = evs.map(dayState).sort((a,b) => order.indexOf(a) - order.indexOf(b))[0];
+          cell = el("a", "d c-" + s, String(dd));
+          cell.href = "#d-" + evs[0].id;
+          cell.title = evs.map(e => e.cidade).join(", ") + " · " + ESTADO_DIA[s];
+          cell.setAttribute("aria-label", dd + " " + MON[m-1] + ": " + cell.title);
+          cell.addEventListener("click", (e) => {
+            e.preventDefault();
+            const target = document.getElementById("d-" + evs[0].id);
+            if (!target) return;
+            target.scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "start" });
+            target.classList.add("flash"); setTimeout(() => target.classList.remove("flash"), 1600);
+          });
+        } else {
+          cell = el("span", "d" + (iso < t ? " past" : ""), String(dd));
+        }
+        if (iso === t) cell.classList.add("today");
+        g.append(cell);
+      }
+      box.append(h, g);
+      cal.append(box);
+    }
+  }
+
   function card(d) {
     const c = el("article", "card");
+    c.id = "d-" + d.id;
     const [y, m, dd] = d.data.split("-").map(Number);
     const dt = new Date(y, m-1, dd);
     const w = el("div", "when");
@@ -246,6 +335,7 @@ details.past .card { opacity: .7; }
     const t = todayISO();
     const ds = [...D.datas].sort((a, b) => a.data.localeCompare(b.data));
     const next = ds.filter(d => d.data >= t), past = ds.filter(d => d.data < t).reverse();
+    calendar(next);
     const list = $("#list");
     if (next.length) list.replaceChildren(...next.map(card));
     else { const e = el("div", "empty"); e.append(el("h2", null, "Ainda não há datas confirmadas."), el("p", null, "Quando uma data fica fechada, aparece aqui com a cidade e a equipa.")); list.replaceChildren(e); }
